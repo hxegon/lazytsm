@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"lazyproj/util"
+	"lazyproj/project"
 
 	"github.com/charmbracelet/bubbles/list"
 	tlist "github.com/charmbracelet/bubbles/list"
@@ -13,19 +13,6 @@ import (
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
-
-type projectItem struct {
-	title, desc string
-}
-
-// list item interface
-func (p projectItem) Title() string       { return p.title }
-func (p projectItem) Description() string { return p.desc }
-func (p projectItem) FilterValue() string { return p.title }
-
-func (p projectItem) Path() string {
-	return p.desc
-}
 
 type model struct {
 	list    tlist.Model
@@ -46,7 +33,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c":
 			return m, tea.Quit
 		case "enter":
-			selected := m.list.SelectedItem().(projectItem).Path()
+			selected := m.list.SelectedItem().(project.Item).Path()
 			m.selectC <- selected
 		}
 	}
@@ -61,7 +48,7 @@ func (m model) View() string {
 }
 
 func main() {
-	dirs, err := util.FindGitDirs("/home/hxegon/Code")
+	dirs, err := project.FindGitDirs("/home/hxegon/Code")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -69,10 +56,7 @@ func main() {
 	projList := make([]tlist.Item, 0, len(dirs))
 
 	for _, path := range dirs {
-		projList = append(projList, projectItem{
-			title: filepath.Base(path),
-			desc:  path,
-		})
+		projList = append(projList, project.NewItem(filepath.Base(path), path))
 	}
 
 	selectC := make(chan string)
