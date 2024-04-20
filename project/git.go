@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-func FindGitDirs(root string) ([]string, error) {
+func findGitDirs(root string) ([]string, error) {
 	gitDirs := make([]string, 0, 30) // initialize a slice with an initial cap of 30
 
 	walkDirFn := func(path string, entry os.DirEntry, err error) error {
@@ -40,4 +40,21 @@ func FindGitDirs(root string) ([]string, error) {
 	}
 
 	return gitDirs, nil
+}
+
+func FindGitProjects(root string) ([]Item, error) {
+	gitDirs, err := findGitDirs(root)
+	if err != nil { // Good pattern?
+		return []Item{}, err
+	}
+
+	projs := make([]Item, len(gitDirs))
+	for i, d := range gitDirs {
+		projs[i] = Item{
+			title: filepath.Base(d),
+			desc:  d,
+			path:  d,
+		}
+	}
+	return projs, nil
 }

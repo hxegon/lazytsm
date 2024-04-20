@@ -9,7 +9,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"os"
-	"path/filepath"
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
@@ -47,22 +46,26 @@ func (m model) View() string {
 	return docStyle.Render(m.list.View())
 }
 
+var testSearchDir = "/home/hxegon/Code"
+
 func main() {
-	dirs, err := project.FindGitDirs("/home/hxegon/Code")
+	projs, err := project.FindGitProjects(testSearchDir)
+
+	// TODO: Handle case where no projects are found
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("lazyproj has encountered an error:", err)
 	}
 
-	projList := make([]tlist.Item, 0, len(dirs))
-
-	for _, path := range dirs {
-		projList = append(projList, project.NewItem(filepath.Base(path), path))
+	// Convert proj list to the right slice type
+	items := make([]tlist.Item, len(projs))
+	for i, p := range projs {
+		items[i] = tlist.Item(p)
 	}
 
 	selectC := make(chan string)
 
 	m := model{
-		list:    tlist.New(projList, list.NewDefaultDelegate(), 0, 0),
+		list:    tlist.New(items, list.NewDefaultDelegate(), 0, 0),
 		selectC: selectC,
 	}
 	m.list.Title = "Projects"
