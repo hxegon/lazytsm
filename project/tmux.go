@@ -114,5 +114,5 @@ func (t Tmux) OpenOrSwitchTmuxSession(target, cwdPath string) error {
 	// I don't think tmux will inherit your env without the os.Environ() here
 	err := syscall.Exec(t.binPath, tmuxCmd, os.Environ())
 
-	return fmt.Errorf("lazyproj couldn't become tmux command. This should never happen!: %v", err)
+	return fmt.Errorf("lazytsm couldn't become tmux command. This should never happen!: %v", err)
 }

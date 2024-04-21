@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"lazyproj/config"
-	"lazyproj/project"
+	"lazytsm/config"
+	"lazytsm/project"
 
 	"github.com/charmbracelet/bubbles/list"
 	tlist "github.com/charmbracelet/bubbles/list"
@@ -51,7 +51,7 @@ func (m model) View() string {
 func main() {
 	conf, err := config.ReadDefaultConfig()
 	if err != nil {
-		fmt.Printf("Couldn't read config file ~/.lazyproj: %v", err)
+		fmt.Printf("Couldn't read config file ~/.lazytsm: %v", err)
 		os.Exit(1)
 	}
 
@@ -65,7 +65,7 @@ func main() {
 
 	gDirs, err := project.FindGitProjects(conf.GitSearchDirs...)
 	if err != nil {
-		fmt.Println("lazyproj has encountered an error:", err)
+		fmt.Println("lazytsm has encountered an error:", err)
 		os.Exit(1)
 	}
 
@@ -87,7 +87,7 @@ func main() {
 	p := tea.NewProgram(m, tea.WithAltScreen())
 
 	if _, err := p.Run(); err != nil {
-		fmt.Println("lazyproj encountered an error:", err)
+		fmt.Println("lazytsm encountered an error:", err)
 		os.Exit(1)
 	}
 }

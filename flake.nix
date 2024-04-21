@@ -1,5 +1,5 @@
 {
-  description = "A very basic flake";
+  description = "a devShell flake for lazytsm";
 
   inputs = { nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable"; };
 

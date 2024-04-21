@@ -1,4 +1,4 @@
-module lazyproj
+module lazytsm
 
 go 1.22.1
 

@@ -14,7 +14,7 @@ type Config struct {
 }
 
 func DefaultConfigFile() string {
-	return path.Join(os.Getenv("HOME"), ".lazyproj.toml")
+	return path.Join(os.Getenv("HOME"), ".lazytsm.toml")
 }
 
 func ReadConfig(path string) (Config, error) {
