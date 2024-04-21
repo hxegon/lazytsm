@@ -71,6 +71,8 @@ func main() {
 
 	projs = append(projs, gDirs...)
 
+	project.AbbrevPaths(projs)
+
 	// Convert proj list to the right slice type
 	items := make([]tlist.Item, len(projs))
 	for i, p := range projs {

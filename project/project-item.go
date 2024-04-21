@@ -1,7 +1,9 @@
 package project
 
 import (
+	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -34,5 +36,13 @@ func ItemFromPath(path string) Item {
 		title: filepath.Base(path),
 		desc:  path,
 		path:  path,
+	}
+}
+
+func AbbrevPaths(ps []Item) {
+	home := os.Getenv("HOME")
+
+	for i := range ps {
+		ps[i].desc = strings.Replace(ps[i].desc, home, "~", 1)
 	}
 }
