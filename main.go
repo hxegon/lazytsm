@@ -14,8 +14,7 @@ import (
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
 
 type model struct {
-	list    tlist.Model
-	selectC chan string
+	list tlist.Model
 }
 
 func (m model) Init() tea.Cmd {
@@ -33,7 +32,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "enter":
 			selected := m.list.SelectedItem().(project.Item).Path()
-			m.selectC <- selected
+			t, _ := project.NewTmux() // TODO handle error
+			t.OpenOrSwitchTmuxSession(selected, selected)
 		}
 	}
 
@@ -62,28 +62,15 @@ func main() {
 		items[i] = tlist.Item(p)
 	}
 
-	selectC := make(chan string)
-
 	m := model{
-		list:    tlist.New(items, list.NewDefaultDelegate(), 0, 0),
-		selectC: selectC,
+		list: tlist.New(items, list.NewDefaultDelegate(), 0, 0),
 	}
 	m.list.Title = "Projects"
 
 	p := tea.NewProgram(m, tea.WithAltScreen())
 
-	go func() {
-		selected := <-selectC
-		fmt.Println("Selected project:", selected)
-		os.Exit(0)
-	}()
-
 	if _, err := p.Run(); err != nil {
 		fmt.Println("lazyproj encountered an error:", err)
 		os.Exit(1)
 	}
-
-	// for _, p := range dirs {
-	// 	fmt.Printf("%v\n", p)
-	// }
 }
