@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"lazyproj/config"
 	"lazyproj/project"
 
 	"github.com/charmbracelet/bubbles/list"
@@ -42,18 +43,34 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
+// TODO: Handle case where no projects are found
 func (m model) View() string {
 	return docStyle.Render(m.list.View())
 }
 
-var testSearchDir = "/home/hxegon/Code"
-
 func main() {
-	projs, err := project.FindGitProjects(testSearchDir)
-
-	// TODO: Handle case where no projects are found
+	conf, err := config.ReadDefaultConfig()
 	if err != nil {
-		fmt.Println("lazyproj has encountered an error:", err)
+		fmt.Printf("Couldn't read config file ~/.lazyproj: %v", err)
+		os.Exit(1)
+	}
+
+	var projs = make([]project.Item, 0, len(conf.ExtraDirs)+30) // 30+extradirs is a rough guess
+
+	// TODO: DEDUPLICATE DIRS
+	// Put in extra dirs first as they are probably important
+	for _, path := range conf.ExtraDirs {
+		projs = append(projs, project.ItemFromPath(path))
+	}
+
+	for _, dir := range conf.GitSearchDirs {
+		ps, err := project.FindGitProjects(dir)
+		if err != nil {
+			fmt.Println("lazyproj has encountered an error:", err)
+			os.Exit(1)
+		}
+
+		projs = append(projs, ps...)
 	}
 
 	// Convert proj list to the right slice type
