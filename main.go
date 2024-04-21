@@ -63,15 +63,13 @@ func main() {
 		projs = append(projs, project.ItemFromPath(path))
 	}
 
-	for _, dir := range conf.GitSearchDirs {
-		ps, err := project.FindGitProjects(dir)
-		if err != nil {
-			fmt.Println("lazyproj has encountered an error:", err)
-			os.Exit(1)
-		}
-
-		projs = append(projs, ps...)
+	gDirs, err := project.FindGitProjects(conf.GitSearchDirs...)
+	if err != nil {
+		fmt.Println("lazyproj has encountered an error:", err)
+		os.Exit(1)
 	}
+
+	projs = append(projs, gDirs...)
 
 	// Convert proj list to the right slice type
 	items := make([]tlist.Item, len(projs))

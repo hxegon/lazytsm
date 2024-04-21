@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 )
 
 func findGitDirs(root string) ([]string, error) {
@@ -42,19 +43,33 @@ func findGitDirs(root string) ([]string, error) {
 	return gitDirs, nil
 }
 
-func FindGitProjects(root string) ([]Item, error) {
-	gitDirs, err := findGitDirs(root)
-	if err != nil { // Good pattern?
-		return []Item{}, err
-	}
+func FindGitProjects(roots ...string) ([]Item, error) {
+	projs := make([]Item, 0, len(roots)*10)
 
-	projs := make([]Item, len(gitDirs))
-	for i, d := range gitDirs {
-		projs[i] = Item{
-			title: filepath.Base(d),
-			desc:  d,
-			path:  d,
+	for _, root := range roots {
+
+		gitDirs, err := findGitDirs(root)
+		if err != nil { // Good pattern?
+			return []Item{}, err
+		}
+
+		for _, d := range gitDirs {
+			finfo, err := os.Stat(filepath.Join(d, ".git/objects"))
+			if err != nil {
+				return []Item{}, fmt.Errorf("Error encountered trying to stat the .git/objects dir for %v", d)
+			}
+
+			projs = append(projs, Item{
+				title: filepath.Base(d),
+				desc:  d,
+				// desc:  fmt.Sprintf("%v | last modified: %v", d, finfo.ModTime().Format("01/02/2006")),
+				path:  d,
+				mtime: finfo.ModTime(),
+			})
 		}
 	}
+
+	slices.SortFunc(projs, func(a, b Item) int { return b.mtime.Compare(a.mtime) })
+
 	return projs, nil
 }

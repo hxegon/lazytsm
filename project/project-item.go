@@ -2,10 +2,12 @@ package project
 
 import (
 	"path/filepath"
+	"time"
 )
 
 type Item struct {
 	title, desc, path string
+	mtime             time.Time
 }
 
 func NewItem(title, desc, path string) Item {
@@ -14,6 +16,7 @@ func NewItem(title, desc, path string) Item {
 		title: title,
 		desc:  desc,
 		path:  path,
+		mtime: time.Time{},
 	}
 }
 
