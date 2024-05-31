@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"lazytsm/config"
 	"lazytsm/project"
+	"os"
 
-	"github.com/charmbracelet/bubbles/list"
 	tlist "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"os"
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
@@ -55,7 +54,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	var projs = make([]project.Item, 0, len(conf.ExtraDirs)+30) // 30+extradirs is a rough guess
+	projs := make([]project.Item, 0, len(conf.ExtraDirs)+50)
 
 	// TODO: DEDUPLICATE DIRS
 	// Put in extra dirs first as they are probably important
@@ -71,17 +70,29 @@ func main() {
 
 	projs = append(projs, gDirs...)
 
-	project.AbbrevPaths(projs)
+	// Remove the current session from the project list
+	tm, err := project.NewTmux()
+	if err != nil {
+		panic(err)
+	}
+
+	currentName := tm.CurrentSessionName()
+	home := os.Getenv("HOME")
 
 	// Convert proj list to the right slice type
-	items := make([]tlist.Item, len(projs))
-	for i, p := range projs {
-		items[i] = tlist.Item(p)
+	var items []tlist.Item
+	for _, p := range projs {
+		// Don't add a project for any current sessions
+		if p.Description() != currentName {
+			p.AbbrevPath(home)
+			items = append(items, tlist.Item(p))
+		}
 	}
 
 	m := model{
-		list: tlist.New(items, list.NewDefaultDelegate(), 0, 0),
+		list: tlist.New(items, tlist.NewDefaultDelegate(), 0, 0),
 	}
+
 	m.list.Title = "Projects"
 
 	p := tea.NewProgram(m, tea.WithAltScreen())

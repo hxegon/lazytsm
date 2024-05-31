@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"syscall"
 )
 
@@ -18,9 +19,9 @@ const (
 )
 
 type Tmux struct {
-	status  tmuxStatus
-	binPath string
 	error   error
+	binPath string
+	status  tmuxStatus
 }
 
 // Wrap the pgrep command
@@ -47,9 +48,9 @@ func getTmuxStatus() (tmuxStatus, error) {
 func NewTmux() (Tmux, error) {
 	binPath, err := exec.LookPath("tmux")
 	if err == nil {
-		binPath, _ = filepath.Abs(binPath) // TODO
+		binPath, _ = filepath.Abs(binPath)
 	} else {
-		return Tmux{}, fmt.Errorf("Couldn't find tmux executable in $PATH: %v", err)
+		return Tmux{}, fmt.Errorf("couldn't find tmux executable in $PATH: %v", err)
 	}
 
 	st, err := getTmuxStatus()
@@ -83,11 +84,32 @@ func (t Tmux) HasSession(query string) (bool, error) {
 	return false, nil
 }
 
-// This function will end the current process
-// NOTE: This sets the name of the tmux session to the name of target
-// !!!: THIS ENDS THE CURRENT GO PROGRAM AND BECOMES THE TMUX PROGRAM!!!
+// Returns the name of the current session, or an empty string if there isn't one.
+//
+// i.e. We aren't in a session or tmux isn't running or something
+func (t *Tmux) CurrentSessionName() string {
+	// There's no current session name if we aren't in a tmux session.
+	if t.status != runningInside {
+		return ""
+	}
+
+	cmd := exec.Command("tmux", "display-message", "-p", "#S")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		panic("Command to get tmux session named errored in an unexpected way.")
+	}
+
+	return strings.TrimRight(string(out), "\n")
+}
+
+/*
+This function will end the current process
+
+NOTE: This sets the name of the tmux session to the name of target
+
+!!!: THIS ENDS THE CURRENT GO PROGRAM AND BECOMES THE TMUX PROGRAM!!!
+*/
 func (t Tmux) OpenOrSwitchTmuxSession(target, cwdPath string) error {
-	// TODO: Break this up once I understand it better, as of now it's a ripoff of the old
 	// attach/new-session logic in the tms script
 	var tmuxCmd []string
 	switch t.status {
@@ -96,7 +118,7 @@ func (t Tmux) OpenOrSwitchTmuxSession(target, cwdPath string) error {
 	case runningNotInside, runningInside:
 		if has, _ := t.HasSession(target); !has {
 			// Make session without switching to it
-			exec.Command("tmux", "new-session", "-ds", target, "-c", cwdPath).Run() // .Error()
+			exec.Command("tmux", "new-session", "-ds", target, "-c", cwdPath).Run() // TODO: Error handling
 		}
 		// and switch to it
 		if t.status == runningInside {
@@ -107,7 +129,7 @@ func (t Tmux) OpenOrSwitchTmuxSession(target, cwdPath string) error {
 			tmuxCmd = []string{"tmux", "attach", "-t", target}
 		}
 	case unknown:
-		panic(fmt.Sprintf("idk, unknown Tmux.status", t.error))
+		panic(fmt.Sprintf("idk, unknown Tmux.status %v", t.error))
 	}
 
 	// low level call so the go program "becomes" the tmux command

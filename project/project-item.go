@@ -1,15 +1,14 @@
 package project
 
 import (
-	"os"
 	"path/filepath"
 	"strings"
 	"time"
 )
 
 type Item struct {
-	title, desc, path string
 	mtime             time.Time
+	title, desc, path string
 }
 
 func NewItem(title, desc, path string) Item {
@@ -39,10 +38,6 @@ func ItemFromPath(path string) Item {
 	}
 }
 
-func AbbrevPaths(ps []Item) {
-	home := os.Getenv("HOME")
-
-	for i := range ps {
-		ps[i].desc = strings.Replace(ps[i].desc, home, "~", 1)
-	}
+func (i *Item) AbbrevPath(home string) {
+	i.desc = strings.Replace(i.desc, home, "~", 1)
 }
