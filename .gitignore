@@ -4,3 +4,6 @@
 tmp/
 
 .direnv/
+
+# ignore app binary
+lazytsm
