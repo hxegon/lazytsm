@@ -44,6 +44,7 @@ When you're in the program you can use `/` to filter, and you select what sessio
 - [x] use standard cmd/ folder
 - [x] Rename lazyproj -> lazytsm
 - [x] Write a proper readme
+- [ ] Modes: default to search, but also have an ibuffer like mode where you can mark sessions for deletion
 - [ ] command line args
 - [ ] List project tmux sessions, differentiate list items ( No duplicates of standard projects! )
 - [ ] Use a table instead of a list, will allow things like displaying git status, type of project, last switched etc.

@@ -63,6 +63,10 @@ func NewTmux() (Tmux, error) {
 	return tm, err
 }
 
+func (t Tmux) SessionNames() []string {
+	return []string{}
+}
+
 // Checks if there's a tmux session with a matching name. Always returns false if tmux isn't running
 func (t Tmux) HasSession(query string) (bool, error) {
 	if t.status == notRunning || t.status == unknown {
