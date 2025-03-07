@@ -46,6 +46,7 @@ When you're in the program you can use `/` to filter, and you select what sessio
 - [x] Write a proper readme
 - [ ] Modes: default to search, but also have an ibuffer like mode where you can mark sessions for deletion
 - [ ] command line args
+    - [ ] help option
 - [ ] List project tmux sessions, differentiate list items ( No duplicates of standard projects! )
 - [ ] Use a table instead of a list, will allow things like displaying git status, type of project, last switched etc.
 - [ ] Store timestamp when a selecting a session, and use it to sort by most recently used

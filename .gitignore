@@ -9,3 +9,4 @@ tmp/
 lazytsm
 
 *.tape
+/gomod2nix-template
