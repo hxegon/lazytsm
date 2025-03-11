@@ -9,6 +9,9 @@ import (
 	"syscall"
 )
 
+// TODO: Refactor so that if something changes about the TMux session during runtime, it won't cause issues
+// TODO: figure out how to replace pgrep dependency
+
 type tmuxStatus int
 
 const (
@@ -73,7 +76,6 @@ func (t Tmux) HasSession(query string) (bool, error) {
 		return false, nil
 	}
 
-	// TODO: injection vuln issue?
 	tArg := fmt.Sprintf("-t=%v", query)
 
 	cmd := exec.Command("tmux", "has-session", tArg)
