@@ -11,3 +11,4 @@ lazytsm
 *.tape
 /gomod2nix-template
 /result
+/bin

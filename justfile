@@ -1,11 +1,11 @@
 _default:
     @just --choose
 
-run:
-    go run cmd/lazytsm.go
+run: build
+    ./bin/lazytsm
 
 build:
-    go build cmd/lazytsm.go
+    go build -o bin/lazytsm
 
 tidy:
     go mod tidy
