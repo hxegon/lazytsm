@@ -1,4 +1,4 @@
-package config
+package main
 
 import (
 	"fmt"
@@ -24,6 +24,7 @@ func ReadConfig(path string) (Config, error) {
 	}
 
 	var conf Config
+
 	_, err := toml.DecodeFile(path, &conf)
 	if err != nil {
 		return Config{}, fmt.Errorf("Error parsing config file at %v: %v", path, err)

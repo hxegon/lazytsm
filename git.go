@@ -1,4 +1,4 @@
-package project
+package main
 
 import (
 	"fmt"
@@ -69,6 +69,7 @@ func FindGitProjects(roots ...string) ([]Item, error) {
 		}
 	}
 
+	// Sort projects by modified time
 	slices.SortFunc(projs, func(a, b Item) int { return b.mtime.Compare(a.mtime) })
 
 	return projs, nil

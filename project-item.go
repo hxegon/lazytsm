@@ -1,4 +1,4 @@
-package project
+package main
 
 import (
 	"path/filepath"
@@ -11,6 +11,7 @@ type Item struct {
 	title, desc, path string
 }
 
+// TODO: Could just return the tlist.Item interface here?
 func NewItem(title, desc, path string) Item {
 	// TODO: Validate that the path exists?
 	return Item{
