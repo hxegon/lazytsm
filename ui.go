@@ -14,8 +14,8 @@ type UIModel struct {
 }
 
 func (m UIModel) Init() (tea.Model, tea.Cmd) {
-	m.List.SetFilteringEnabled(true)       // Does this just say that you CAN filter? I want it to start actively filtered
-	m.List.SetFilterState(tlist.Filtering) // Should start in the filtering mode by default
+	m.List.SetFilteringEnabled(true) // Does this just say that you CAN filter? I want it to start actively filtered
+	// m.List.SetFilterState(tlist.Filtering) // Should start in the filtering mode by default
 	return m, nil
 }
 
