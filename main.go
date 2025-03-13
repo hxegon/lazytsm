@@ -19,7 +19,9 @@ func main() {
 		panic(err)
 	}
 
-	p := tea.NewProgram(UIModelFromItems(state.Projects), tea.WithAltScreen())
+	m := UIModelFromItems(state.Projects)
+
+	p := tea.NewProgram(m, tea.WithAltScreen())
 
 	if _, err := p.Run(); err != nil {
 		fmt.Println("lazytsm encountered an error:", err)

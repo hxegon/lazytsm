@@ -15,7 +15,11 @@ type UIModel struct {
 
 func (m UIModel) Init() (tea.Model, tea.Cmd) {
 	m.List.SetFilteringEnabled(true) // Does this just say that you CAN filter? I want it to start actively filtered
-	// m.List.SetFilterState(tlist.Filtering) // Should start in the filtering mode by default
+
+	// Start in filtering mode
+	m.List.SetFilterText("") // need to set an initial filter query, otherwise nothing shows up at first
+	m.List.SetFilterState(tlist.Filtering)
+
 	return m, nil
 }
 
