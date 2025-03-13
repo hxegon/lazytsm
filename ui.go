@@ -10,6 +10,7 @@ var docStyle = lipgloss.NewStyle().Margin(1, 2)
 
 type UIModel struct {
 	List tlist.Model
+	Tmux Tmux
 }
 
 func (m UIModel) Init() tea.Cmd {
@@ -27,8 +28,7 @@ func (m UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "enter":
 			selected := m.List.SelectedItem().(Item).Path()
-			t, _ := NewTmux() // TODO handle error
-			t.OpenOrSwitchTmuxSession(selected, selected)
+			m.Tmux.OpenOrSwitchTmuxSession(selected, selected)
 		}
 	}
 
@@ -53,5 +53,13 @@ func UIModelFromItems(items []Item) UIModel {
 	list := tlist.New(teaItems, tlist.NewDefaultDelegate(), 0, 0)
 	list.Title = "Projects"
 
-	return UIModel{List: list}
+	tm, err := NewTmux()
+	if err != nil {
+		panic(err)
+	}
+
+	return UIModel{
+		List: list,
+		Tmux: tm,
+	}
 }
