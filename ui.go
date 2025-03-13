@@ -1,9 +1,9 @@
 package main
 
 import (
-	tlist "github.com/charmbracelet/bubbles/list"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	tlist "github.com/charmbracelet/bubbles/v2/list"
+	tea "github.com/charmbracelet/bubbletea/v2"
+	"github.com/charmbracelet/lipgloss/v2"
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
@@ -13,8 +13,8 @@ type UIModel struct {
 	Tmux Tmux
 }
 
-func (m UIModel) Init() tea.Cmd {
-	return nil // do nothing for now
+func (m UIModel) Init() (tea.Model, tea.Cmd) {
+	return m, nil
 }
 
 func (m UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
