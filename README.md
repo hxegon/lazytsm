@@ -53,12 +53,15 @@ session you want to open with `enter`
 - [x] Sort by .git/objects modtime
 - [x] Shorten $HOME parts of path to ~
 - [x] Write a proper readme
+- [x] nix build
+- [x] start in filter mode
+- [ ] Make filter state style a bit prettier
 - [ ] command line args
   - [ ] help option
-- [ ] start in filter mode
 - [ ] Use a table instead of a list, will allow things like displaying git
       status, type of project, last switched etc.
 - [ ] nix _Installation instructions_
+- [ ] Instructions for adding popup window shortcut
 
 - [ ] Store timestamp when a selecting a session, and use it to sort by most
       recently used
@@ -69,4 +72,3 @@ session you want to open with `enter`
 - [ ] Parse ssh host config and have a way to start / reattach to a session on a
       remote host
 - [ ] A way to save / restore sessions, or start sessions based on a config file
-- [x] nix build
