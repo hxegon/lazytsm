@@ -54,12 +54,10 @@ session you want to open with `enter`
 - [x] Shorten $HOME parts of path to ~
 - [x] Write a proper readme
 - [x] nix build
-- [x] start in filter mode
-- [ ] Make filter state style a bit prettier
+- [x] Automatically filter when user starts typing non command chars
+- [x] Make filter state style a bit prettier
 - [ ] command line args
   - [ ] help option
-- [ ] Use a table instead of a list, will allow things like displaying git
-      status, type of project, last switched etc.
 - [ ] nix _Installation instructions_
 - [ ] Instructions for adding popup window shortcut
 
