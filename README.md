@@ -22,6 +22,7 @@ Make a `.lazytsm.toml` in your `$HOME` folder that looks something like this:
 gitSearchDirs = [
 "/home/hxegon/Code"
 ]
+
 extraDirs = [
 "/home/hxegon/dotfiles",
 "/home/hxegon/scripts",
@@ -45,28 +46,3 @@ bind-key C-p popup -d "#{pane_current_path}" -h 80% -w 60% -E /home/hxegon/Code/
 
 When you're in the program you can use `/` to filter, and you select what
 session you want to open with `enter`
-
-## V1 roadmap
-
-- [x] Config file
-- [x] extra directories
-- [x] Sort by .git/objects modtime
-- [x] Shorten $HOME parts of path to ~
-- [x] Write a proper readme
-- [x] nix build
-- [x] Automatically filter when user starts typing non command chars
-- [x] Make filter state style a bit prettier
-- [ ] command line args
-  - [ ] help option
-- [ ] nix _Installation instructions_
-- [ ] Instructions for adding popup window shortcut
-
-- [ ] Store timestamp when a selecting a session, and use it to sort by most
-      recently used
-- [ ] Modes: default to search, but also have an ibuffer like mode where you can
-      mark sessions for deletion
-- [ ] List project tmux sessions, differentiate list items ( No duplicates of
-      standard projects! )
-- [ ] Parse ssh host config and have a way to start / reattach to a session on a
-      remote host
-- [ ] A way to save / restore sessions, or start sessions based on a config file
