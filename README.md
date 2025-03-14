@@ -26,7 +26,7 @@ bind-key C-g popup -d "#{pane_current_path}" -h 90% -w 100% -E lazygit
 
 You can then use your tmux leader, then control-g to open it.
 
-## Usage
+## Configuration
 
 Make a `.lazytsm.toml` in your `$HOME` folder that looks something like this:
 
@@ -49,9 +49,7 @@ extraDirs = [
 `lazytsm` will get you into a tmux session in that folder, either starting a new
 one or attaching/switching to one with the same name
 
-I use this through a tmux popup window so I can switch quickly from any program
-through a key binding:
+## Usage
 
-```
-bind-key C-p popup -d "#{pane_current_path}" -h 80% -w 60% -E /home/hxegon/Code/hxegon/lazytsm/lazytsm
-```
+You can use Ctrl+n or Ctrl+p to navigate up and down the list of candidates, or
+just start typing to search for something by name.

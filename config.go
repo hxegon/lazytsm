@@ -18,14 +18,15 @@ func DefaultConfigFile() string {
 }
 
 func ReadConfig(path string) (Config, error) {
-	// Check for config file
+	// Check that config file exists
 	if _, err := os.Stat(path); err != nil {
-		return Config{}, fmt.Errorf("Error reading config at %v: %v", path, err)
+		return Config{}, fmt.Errorf("error reading config at %v: %v", path, err)
 	}
 
 	var conf Config
 
 	_, err := toml.DecodeFile(path, &conf)
+
 	if err != nil {
 		return Config{}, fmt.Errorf("Error parsing config file at %v: %v", path, err)
 	}

@@ -14,6 +14,27 @@ type UIModel struct {
 	Tmux Tmux
 }
 
+// changes the index of the selected item relative to the current one. Changes the filter state to FilterApplied if in filter state.
+func (m *UIModel) slideSelectedItem(offset int) {
+	// Need to change from Filtering -> FilterApplied, no candidate can be selected in Filtering
+	if m.List.FilterState() == tlist.Filtering {
+		m.List.SetFilterState(tlist.FilterApplied)
+	}
+
+	nextIdx := m.List.Index() + offset
+
+	// Guard against selecting an out of bounds index
+	if nextIdx > 0 {
+		nItems := len(m.List.Items())
+		// use mod to wrap around if selecting next item at end of list
+		nextIdx = nextIdx % nItems
+	} else {
+		nextIdx = max(0, nextIdx)
+	}
+
+	m.List.Select(nextIdx)
+}
+
 // Helper for UIModel.Update
 func isAlphaNum(s string) bool {
 	for _, c := range s {
@@ -49,6 +70,13 @@ func (m UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch s {
 		case "ctrl+c":
 			return m, tea.Quit
+
+		case "ctrl+n":
+			m.slideSelectedItem(1)
+			return m, nil
+		case "ctrl+p":
+			m.slideSelectedItem(-1)
+			return m, nil
 		case "esc":
 			// Only use esc to quit in when not filtering
 			if m.List.FilterState() == tlist.Unfiltered {
@@ -60,6 +88,7 @@ func (m UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
+	// Send any unhandled keys to the default list Update implementation
 	m.List, cmd = m.List.Update(msg)
 	return m, cmd
 }
