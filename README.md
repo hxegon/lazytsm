@@ -14,6 +14,18 @@ appreciated.
 Just clone and `go build cmd/lazytsm.go`, or `just build` There's a `flake.nix`
 and a `.envrc` with `use flake` if you're into that sort of thing
 
+### TMux popup window shortcut
+
+The suggested way to use this inside tmux is to use a shortcut for opening
+`lazytsm` inside a tmux popup window:
+
+```tmux
+# in ~/.tmux.conf or ~/config/tmux/tmux.conf
+bind-key C-g popup -d "#{pane_current_path}" -h 90% -w 100% -E lazygit
+```
+
+You can then use your tmux leader, then control-g to open it.
+
 ## Usage
 
 Make a `.lazytsm.toml` in your `$HOME` folder that looks something like this:
@@ -43,6 +55,3 @@ through a key binding:
 ```
 bind-key C-p popup -d "#{pane_current_path}" -h 80% -w 60% -E /home/hxegon/Code/hxegon/lazytsm/lazytsm
 ```
-
-When you're in the program you can use `/` to filter, and you select what
-session you want to open with `enter`
