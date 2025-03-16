@@ -45,9 +45,10 @@ func main() {
 
 		if len(selected) == 0 {
 			fmt.Println("Nothing was selected")
+			os.Exit(0)
+		} else {
+			tm.OpenOrSwitchTmuxSession(selected, selected)
+			os.Exit(1) // Just in case
 		}
-
-		tm.OpenOrSwitchTmuxSession(selected, selected)
-		os.Exit(0)
 	}
 }
