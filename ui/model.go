@@ -13,9 +13,10 @@ import (
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
 
 type Model struct {
-	List tlist.Model
-	Tmux util.Tmux
-	Keys *AdditionalKeyMap
+	List            tlist.Model
+	Tmux            util.Tmux
+	Keys            *AdditionalKeyMap
+	SelectedSession string
 }
 
 // changes the index of the selected item relative to the current one. Changes the filter state to FilterApplied if in filter state.
@@ -84,9 +85,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.List.FilterState() == tlist.Unfiltered {
 				return m, tea.Quit
 			}
+
 		case key.Matches(msg, m.Keys.enter):
-			selected := m.List.SelectedItem().(Item).Path()
-			m.Tmux.OpenOrSwitchTmuxSession(selected, selected)
+			// Closes UI and return final model with selected session.
+			// The actual switching happens in main
+			m.SelectedSession = m.List.SelectedItem().(Item).Path()
+			return m, tea.Quit
 		}
 	}
 

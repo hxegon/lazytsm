@@ -36,8 +36,18 @@ func main() {
 
 	p := tea.NewProgram(m, tea.WithAltScreen())
 
-	if _, err := p.Run(); err != nil {
+	if m, err := p.Run(); err != nil {
 		fmt.Println("lazytsm encountered an error:", err)
 		os.Exit(1)
+	} else {
+		selected := m.(ui.Model).SelectedSession
+		tm := m.(ui.Model).Tmux
+
+		if len(selected) == 0 {
+			fmt.Println("Nothing was selected")
+		}
+
+		tm.OpenOrSwitchTmuxSession(selected, selected)
+		os.Exit(0)
 	}
 }

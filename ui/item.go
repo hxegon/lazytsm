@@ -12,7 +12,6 @@ type Item struct {
 }
 
 func NewItem(desc string, project project.Project) tlist.Item {
-	// TODO: Validate that the path exists?
 	return Item{
 		Project: project,
 		desc:    desc,
