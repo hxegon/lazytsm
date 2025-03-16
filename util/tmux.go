@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"fmt"
@@ -138,9 +138,9 @@ func (t Tmux) OpenOrSwitchTmuxSession(target, cwdPath string) error {
 		panic(fmt.Sprintf("idk, unknown Tmux.status %v", t.error))
 	}
 
-	// low level call so the go program "becomes" the tmux command
+	// low level call so the lazytsm process "becomes" the tmux command
 	// I don't think tmux will inherit your env without the os.Environ() here
 	err := syscall.Exec(t.binPath, tmuxCmd, os.Environ())
 
-	return fmt.Errorf("lazytsm couldn't become tmux command. This should never happen!: %v", err)
+	return fmt.Errorf("lazytsm couldn't exec tmux command. This should never happen!: %v", err)
 }

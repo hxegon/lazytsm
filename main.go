@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"lazytsm/project"
+	"lazytsm/ui"
 	"os"
 
+	tlist "github.com/charmbracelet/bubbles/v2/list"
 	tea "github.com/charmbracelet/bubbletea/v2"
 )
 
@@ -19,7 +22,17 @@ func main() {
 		panic(err)
 	}
 
-	m := UIModelFromItems(state.Projects)
+	// Convert projects to suitable ui items
+	items := make([]tlist.Item, len(state.Projects))
+
+	for idx, p := range state.Projects {
+		items[idx] = ui.NewItem(
+			project.ShortPath(p, state.Home),
+			p,
+		)
+	}
+
+	m := ui.NewModel(items)
 
 	p := tea.NewProgram(m, tea.WithAltScreen())
 

@@ -1,21 +1,22 @@
-package main
+package ui
 
 import (
 	tlist "github.com/charmbracelet/bubbles/v2/list"
 	tea "github.com/charmbracelet/bubbletea/v2"
 	"github.com/charmbracelet/lipgloss/v2"
+	"lazytsm/util"
 	"unicode"
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
 
-type UIModel struct {
+type Model struct {
 	List tlist.Model
-	Tmux Tmux
+	Tmux util.Tmux
 }
 
 // changes the index of the selected item relative to the current one. Changes the filter state to FilterApplied if in filter state.
-func (m *UIModel) slideSelectedItem(offset int) {
+func (m *Model) slideSelectedItem(offset int) {
 	// Need to change from Filtering -> FilterApplied, no candidate can be selected in Filtering
 	if m.List.FilterState() == tlist.Filtering {
 		m.List.SetFilterState(tlist.FilterApplied)
@@ -46,11 +47,11 @@ func isAlphaNum(s string) bool {
 	return true
 }
 
-func (m UIModel) Init() (tea.Model, tea.Cmd) {
+func (m Model) Init() (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
@@ -94,27 +95,30 @@ func (m UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 // TODO: Handle case where no projects are found
-func (m UIModel) View() string {
+func (m Model) View() string {
 	return docStyle.Render(m.List.View())
 }
 
-func UIModelFromItems(items []Item) UIModel {
-	var teaItems []tlist.Item
-
-	// Convert to interface type, go doesn't allow for implicit conversions of pointer types
-	for _, i := range items {
-		teaItems = append(teaItems, tlist.Item(i))
-	}
-
-	list := tlist.New(teaItems, tlist.NewDefaultDelegate(), 0, 0)
+func NewModel(items []tlist.Item) Model {
+	list := tlist.New(items, tlist.NewDefaultDelegate(), 0, 0)
 	list.Title = "Projects"
+	// TODO: Show these in default help view. Remove j/k from help listing
+	// list.AdditionalFullHelpKeys = func() []key.Binding {
+	// 	keyMap := newUIKeyMap()
+	// 	return []key.Binding{
+	// 		keyMap.navNext,
+	// 		keyMap.navPrev,
+	// 		keyMap.quit,
+	// 		keyMap.quit2,
+	// 	}
+	// }
 
-	tm, err := NewTmux()
+	tm, err := util.NewTmux()
 	if err != nil {
 		panic(err)
 	}
 
-	return UIModel{
+	return Model{
 		List: list,
 		Tmux: tm,
 	}
