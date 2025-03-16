@@ -1,11 +1,13 @@
 package ui
 
 import (
+	"lazytsm/util"
+	"unicode"
+
+	"github.com/charmbracelet/bubbles/v2/key"
 	tlist "github.com/charmbracelet/bubbles/v2/list"
 	tea "github.com/charmbracelet/bubbletea/v2"
 	"github.com/charmbracelet/lipgloss/v2"
-	"lazytsm/util"
-	"unicode"
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
@@ -13,6 +15,7 @@ var docStyle = lipgloss.NewStyle().Margin(1, 2)
 type Model struct {
 	List tlist.Model
 	Tmux util.Tmux
+	Keys *AdditionalKeyMap
 }
 
 // changes the index of the selected item relative to the current one. Changes the filter state to FilterApplied if in filter state.
@@ -36,15 +39,14 @@ func (m *Model) slideSelectedItem(offset int) {
 	m.List.Select(nextIdx)
 }
 
-// Helper for UIModel.Update
+// Helper for Model.Update
 func isAlphaNum(s string) bool {
 	for _, c := range s {
-		if !unicode.IsLetter(c) && !unicode.IsDigit(c) {
-			return false
+		if unicode.IsLetter(c) || unicode.IsDigit(c) {
+			return true
 		}
 	}
-
-	return true
+	return false
 }
 
 func (m Model) Init() (tea.Model, tea.Cmd) {
@@ -68,22 +70,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 		}
 
-		switch s {
-		case "ctrl+c":
+		switch {
+		case key.Matches(msg, m.List.KeyMap.Quit):
 			return m, tea.Quit
-
-		case "ctrl+n":
+		case key.Matches(msg, m.List.KeyMap.CursorDown):
 			m.slideSelectedItem(1)
 			return m, nil
-		case "ctrl+p":
+		case key.Matches(msg, m.List.KeyMap.CursorUp):
 			m.slideSelectedItem(-1)
 			return m, nil
-		case "esc":
+		case key.Matches(msg, m.Keys.esc):
 			// Only use esc to quit in when not filtering
 			if m.List.FilterState() == tlist.Unfiltered {
 				return m, tea.Quit
 			}
-		case "enter":
+		case key.Matches(msg, m.Keys.enter):
 			selected := m.List.SelectedItem().(Item).Path()
 			m.Tmux.OpenOrSwitchTmuxSession(selected, selected)
 		}
@@ -102,16 +103,9 @@ func (m Model) View() string {
 func NewModel(items []tlist.Item) Model {
 	list := tlist.New(items, tlist.NewDefaultDelegate(), 0, 0)
 	list.Title = "Projects"
-	// TODO: Show these in default help view. Remove j/k from help listing
-	// list.AdditionalFullHelpKeys = func() []key.Binding {
-	// 	keyMap := newUIKeyMap()
-	// 	return []key.Binding{
-	// 		keyMap.navNext,
-	// 		keyMap.navPrev,
-	// 		keyMap.quit,
-	// 		keyMap.quit2,
-	// 	}
-	// }
+
+	list.AdditionalFullHelpKeys = KeyBindings
+	list.KeyMap = *newDefaultKeyMap()
 
 	tm, err := util.NewTmux()
 	if err != nil {
@@ -121,5 +115,6 @@ func NewModel(items []tlist.Item) Model {
 	return Model{
 		List: list,
 		Tmux: tm,
+		Keys: newAdditionalKeyMap(),
 	}
 }
