@@ -1,4 +1,10 @@
-# A TUI for managing tmux sessions.
+# A TUI for navigating tmux sessions.
+
+`lazytsm` treats a set of preconfigured directories as a list of (potential or
+active) tmux sessions. Select a directory containing git repos, and you can
+fuzzy search them. Press enter to either create a new tmux session with that
+repo as the working directory, or reattach to an existing session associated
+with it.
 
 ![](https://github.com/hxegon/lazytsm/blob/main/show.gif)
 
@@ -11,8 +17,11 @@ appreciated.
 
 ## Installation
 
-Just clone and `go build cmd/lazytsm.go`, or `just build` There's a `flake.nix`
-and a `.envrc` with `use flake` if you're into that sort of thing
+Check the justfile for build/run instructions. You can also install this as a
+nix package.
+
+For dev dependencies there's a `flake.nix` and a `.envrc` with `use flake` if
+you're into that sort of thing
 
 ### TMux popup window shortcut
 
@@ -44,10 +53,7 @@ extraDirs = [
 ```
 
 `gitSearchDirs` will search for any directories containing a `.git` folder,
-`extraDirs` will list those folders as is.
-
-`lazytsm` will get you into a tmux session in that folder, either starting a new
-one or attaching/switching to one with the same name
+`extraDirs` will add those folders as is.
 
 ## Usage
 
