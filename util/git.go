@@ -5,7 +5,6 @@ import (
 	"lazytsm/project"
 	"os"
 	"path/filepath"
-	// "slices"
 	"time"
 )
 
@@ -21,7 +20,6 @@ func NewGitDir(path string) project.Project {
 
 // Override default projecter ModTime() to check modtime for .git/objects instead
 func (gd GitDir) ModTime() (time.Time, error) {
-	// TODO: What should I do for err?
 	finfo, err := os.Stat(filepath.Join(gd.Path(), ".git/objects"))
 	if err != nil {
 		return time.Time{}, err
