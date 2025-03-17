@@ -1,8 +1,8 @@
 package util
 
 import (
-	"fmt"
 	"lazytsm/project"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"time"
@@ -34,7 +34,7 @@ func GitProjectSearch(root string) ([]project.Project, error) {
 
 	walkDirFn := func(path string, entry os.DirEntry, err error) error {
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error while accessing path: %q, %v", path, err)
+			slog.Error("error occurred while searching for git projects", "root", root, "path", path, "error", err)
 			return err
 		}
 
@@ -58,7 +58,7 @@ func GitProjectSearch(root string) ([]project.Project, error) {
 	}
 
 	if err := filepath.WalkDir(root, walkDirFn); err != nil {
-		fmt.Fprintf(os.Stderr, "Error walking path: %q, %v", root, err)
+		slog.Error("error searching for git directories", "error", err, "root", root)
 		return gitDirs, err
 	}
 

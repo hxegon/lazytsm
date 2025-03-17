@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -102,7 +103,8 @@ func (t *Tmux) CurrentSessionName() string {
 	cmd := exec.Command("tmux", "display-message", "-p", "#S")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		panic("Command to get tmux session named had an unexpected error")
+		slog.Error("Command to get tmux session name had an unexpected error", "error", err)
+		panic(err)
 	}
 
 	return strings.TrimRight(string(out), "\n")
@@ -128,14 +130,15 @@ func (t Tmux) OpenOrSwitchTmuxSession(target, cwdPath string) error {
 		}
 		// and switch to it
 		if t.status == runningInside {
-			fmt.Println("switch-client")
+			slog.Info("running tmux switch-client command")
 			tmuxCmd = []string{"tmux", "switch-client", "-t", target}
 		} else {
-			fmt.Println("attach")
+			slog.Info("running tmux attach command")
 			tmuxCmd = []string{"tmux", "attach", "-t", target}
 		}
 	case unknown:
-		panic(fmt.Sprintf("fatal error, unknown tmux status detected while trying to open/switch: %v", t.error))
+		slog.Error("fatal error, unknown tmux state detected", "error", t.error)
+		os.Exit(1)
 	}
 
 	// low level call so the lazytsm process "becomes" the tmux command

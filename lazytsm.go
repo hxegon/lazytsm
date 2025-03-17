@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"lazytsm/project"
 	"lazytsm/util"
+	"log/slog"
 	"os"
 	"slices"
 )
@@ -24,6 +24,7 @@ func NewState(cfg *Config) State {
 
 	// TODO: Proper error handling
 	if err != nil {
+		slog.Error("fatal error occurred while initializing tmux")
 		panic(err)
 	}
 
@@ -51,7 +52,7 @@ func (state *State) LoadProjects() error {
 		if _, err := os.Stat(path); err != nil {
 			// Only log the error if the dir doesn't exist, but return if it's some unknown one.
 			if os.IsNotExist(err) {
-				fmt.Printf("lazytsm: %v is specified in ExtraDirs configuration, but doesn't exist in filesystem\n", path)
+				slog.Warn("path configured in ExtraDirs could not be found", "path", path)
 			} else {
 				return err
 			}
@@ -78,8 +79,8 @@ func (state *State) LoadProjects() error {
 		bmtime, errB := b.ModTime()
 
 		if errA != nil || errB != nil {
-			err := fmt.Errorf("Unexpected errors when sorting projects by modification time: a: %v, b: %v", errA, errB)
-			panic(err)
+			slog.Error("fatal error occurred when trying to compare project modification times", "project A error", errA, "project B error", errB)
+			os.Exit(1)
 		}
 
 		return bmtime.Compare(amtime)

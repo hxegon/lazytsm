@@ -2,6 +2,7 @@ package ui
 
 import (
 	"lazytsm/util"
+	"log/slog"
 	"unicode"
 
 	"github.com/charmbracelet/bubbles/v2/key"
@@ -113,6 +114,7 @@ func NewModel(items []tlist.Item) Model {
 
 	tm, err := util.NewTmux()
 	if err != nil {
+		slog.Error("Instantiating tmux caused an unexpected error", "error", err)
 		panic(err)
 	}
 
