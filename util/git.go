@@ -28,6 +28,7 @@ func (gd GitDir) ModTime() (time.Time, error) {
 	return finfo.ModTime(), nil
 }
 
+// TODO: Also need to ensure that these files exist
 func GitProjectSearch(root string) ([]project.Project, error) {
 	gitDirs := make([]project.Project, 0, 30) // Give the gitDirs slice a small initial length overhead
 

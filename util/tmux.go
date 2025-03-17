@@ -102,7 +102,7 @@ func (t *Tmux) CurrentSessionName() string {
 	cmd := exec.Command("tmux", "display-message", "-p", "#S")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		panic("Command to get tmux session named errored in an unexpected way.")
+		panic("Command to get tmux session named had an unexpected error")
 	}
 
 	return strings.TrimRight(string(out), "\n")
@@ -135,12 +135,12 @@ func (t Tmux) OpenOrSwitchTmuxSession(target, cwdPath string) error {
 			tmuxCmd = []string{"tmux", "attach", "-t", target}
 		}
 	case unknown:
-		panic(fmt.Sprintf("idk, unknown Tmux.status %v", t.error))
+		panic(fmt.Sprintf("fatal error, unknown tmux status detected while trying to open/switch: %v", t.error))
 	}
 
 	// low level call so the lazytsm process "becomes" the tmux command
 	// I don't think tmux will inherit your env without the os.Environ() here
 	err := syscall.Exec(t.binPath, tmuxCmd, os.Environ())
 
-	return fmt.Errorf("lazytsm couldn't exec tmux command. This should never happen!: %v", err)
+	return fmt.Errorf("lazytsm couldn't exec tmux command. %v", err)
 }
